@@ -18,11 +18,14 @@
 <div class="wrap"><div class="card" id="app"></div></div>
 <script>
 var sessions = {
-  "k7Q2x9Pm": {centre:"Swansea", date:"11 Dec 2026", time:"11:26 AM", licence:"AB7CD"},
-  "m3R8t4Zw": {centre:"Swansea", date:"18 Dec 2026", time:"09:14 AM", licence:"XY3EF"}
+  "k7Q2x9Pm": {centre:"Swansea", date:"11 Dec 2026", time:"11:26 AM"},
+  "m3R8t4Zw": {centre:"Swansea", date:"18 Dec 2026", time:"09:14 AM"}
 };
 var token = new URLSearchParams(location.search).get("s");
 var s = sessions[token];
+var used = false;
+try { used = token && localStorage.getItem("dvsa-used-" + token) === "1"; } catch (e) {}
+if (used) { s = null; }
 var app = document.getElementById("app");
 if (!s) {
   app.innerHTML = "<h1>This link has expired</h1><p class='muted'>Booking links expire once they are used or after a set time. Please ask for a new link.</p>";
@@ -31,14 +34,15 @@ if (!s) {
     "<span class='tag'>Session live</span>" +
     "<h1>A date has been found for you</h1>" +
     "<p><b>" + s.centre + "</b> — " + s.date + " at " + s.time + "</p>" +
-    "<p class='muted'>Licence on file ends: " + s.licence + "</p>" +
     "<form id='f'><label>Your full name</label><input required id='n'>" +
     "<label>Email address</label><input required type='email' id='e'>" +
     "<button class='btn' type='submit'>Continue and finish your booking</button></form>" +
     "<p class='muted'>This is the same live session your operator started — you are picking it up at exactly the stage they left it.</p>";
   document.getElementById("f").addEventListener("submit", function(ev){
     ev.preventDefault();
-    app.innerHTML = "<h1>All done</h1><p>Thank you. Your booking session is complete.</p><p class='muted'>This link has now expired and cannot be opened again.</p>";
+    try { localStorage.setItem("dvsa-used-" + token, "1"); } catch (e) {}
+    app.innerHTML = "<h1>All done</h1><p>Thank you, " + document.getElementById("n").value + ". Your booking session is complete.</p><p class='muted'>This link has now expired and cannot be opened again.</p>";
+    sessions[token] = null;
   });
 }
 </script></body></html>
