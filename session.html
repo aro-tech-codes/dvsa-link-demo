@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your booking session</title>
+<style>
+ body{font:16px/1.5 system-ui,sans-serif;margin:0;background:#f4f4f4;color:#111}
+ .bar{background:#111;color:#fff;padding:12px 16px;font-weight:700}
+ .wrap{max-width:640px;margin:0 auto;padding:24px 16px}
+ .card{background:#fff;border:1px solid #ccc;border-radius:8px;padding:20px;margin:16px 0}
+ h1{font-size:22px;margin-top:0}
+ label{display:block;margin:12px 0 4px;font-weight:600}
+ input{width:100%;padding:10px;border:1px solid #888;border-radius:4px;box-sizing:border-box}
+ .btn{display:inline-block;background:#00703c;color:#fff;border:0;padding:12px 20px;border-radius:4px;cursor:pointer;font-size:16px;margin-top:16px;width:100%}
+ .muted{color:#555;font-size:14px}
+ .tag{display:inline-block;background:#e8f0e8;border:1px solid #00703c;border-radius:12px;padding:2px 10px;font-size:13px}
+</style></head><body>
+<div class="bar">DrivingSlot — secure booking session</div>
+<div class="wrap"><div class="card" id="app"></div></div>
+<script>
+var sessions = {
+  "k7Q2x9Pm": {centre:"Swansea", date:"11 Dec 2026", time:"11:26 AM", licence:"AB7CD"},
+  "m3R8t4Zw": {centre:"Swansea", date:"18 Dec 2026", time:"09:14 AM", licence:"XY3EF"}
+};
+var token = new URLSearchParams(location.search).get("s");
+var s = sessions[token];
+var app = document.getElementById("app");
+if (!s) {
+  app.innerHTML = "<h1>This link has expired</h1><p class='muted'>Booking links expire once they are used or after a set time. Please ask for a new link.</p>";
+} else {
+  app.innerHTML =
+    "<span class='tag'>Session live</span>" +
+    "<h1>A date has been found for you</h1>" +
+    "<p><b>" + s.centre + "</b> — " + s.date + " at " + s.time + "</p>" +
+    "<p class='muted'>Licence on file ends: " + s.licence + "</p>" +
+    "<form id='f'><label>Your full name</label><input required id='n'>" +
+    "<label>Email address</label><input required type='email' id='e'>" +
+    "<button class='btn' type='submit'>Continue and finish your booking</button></form>" +
+    "<p class='muted'>This is the same live session your operator started — you are picking it up at exactly the stage they left it.</p>";
+  document.getElementById("f").addEventListener("submit", function(ev){
+    ev.preventDefault();
+    app.innerHTML = "<h1>All done</h1><p>Thank you. Your booking session is complete.</p><p class='muted'>This link has now expired and cannot be opened again.</p>";
+  });
+}
+</script></body></html>
